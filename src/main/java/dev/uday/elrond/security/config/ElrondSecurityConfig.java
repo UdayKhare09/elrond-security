@@ -30,7 +30,7 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Import({ ElrondPersistenceConfig.class, ElrondMailConfig.class })
-@ComponentScan(basePackages = "dev.uday.elrond.security.lib")
+@ComponentScan(basePackages = "dev.uday.elrond.security")
 public class ElrondSecurityConfig {
 
     private final ElrondSecurityProperties properties;
