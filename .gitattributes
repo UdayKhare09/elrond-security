@@ -1,9 +1,0 @@
-*.class    binary
-*.jar      binary
-*.war      binary
-target/    export-ignore
-.idea/     export-ignore
-README.md  text
-LICENSE    text
-pom.xml    text
-

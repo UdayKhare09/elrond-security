@@ -10,7 +10,7 @@
     </parent>
     <groupId>dev.uday</groupId>
     <artifactId>elrond-security</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>elrond-security</name>
     <description>Elrond Security</description>
 
@@ -79,6 +79,14 @@
             <version>1.5.0</version>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Elrond</name>
+            <url>https://maven.pkg.github.com/UdayKhare09/elrond-security</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
