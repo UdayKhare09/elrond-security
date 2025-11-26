@@ -4,6 +4,7 @@ import dev.uday.elrond.security.service.ElrondAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -36,18 +37,20 @@ public class AuthController {
     }
 
     @PostMapping("/mfa/setup")
-    public ResponseEntity<MfaSetupResponse> setupMfa(@RequestParam String username) {
+    public ResponseEntity<MfaSetupResponse> setupMfa(Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(401).build();
+        }
+        String username = authentication.getName();
         return ResponseEntity.ok(authService.setupMfa(username));
     }
 
-    @PostMapping("/mfa/enable")
-    public ResponseEntity<Void> enableMfa(@RequestParam String username, @RequestParam String totpCode) {
-        authService.enableMfa(username, totpCode);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/mfa/disable")
-    public ResponseEntity<Void> disableMfa(@RequestParam String username, @RequestParam String totpCode) {
+    public ResponseEntity<Void> disableMfa(Authentication authentication, @RequestParam String totpCode) {
+        if (authentication == null || authentication.getName() == null) {
+            return ResponseEntity.status(401).build();
+        }
+        String username = authentication.getName();
         authService.disableMfa(username, totpCode);
         return ResponseEntity.ok().build();
     }

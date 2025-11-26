@@ -1,5 +1,6 @@
 package dev.uday.elrond.security.dto;
 
+import dev.uday.elrond.security.validator.StrongPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,7 @@ public class RegisterRequest {
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
+    @StrongPassword
     private String password;
 
     @NotBlank(message = "First name is required")

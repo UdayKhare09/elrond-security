@@ -20,6 +20,8 @@ public class ElrondSecurityProperties {
     private Mfa mfa = new Mfa();
     private Cors cors = new Cors();
     private Password password = new Password();
+    private RateLimit rateLimit = new RateLimit();
+    private AccountLockout accountLockout = new AccountLockout();
 
     @Data
     public static class Jwt {
@@ -55,5 +57,19 @@ public class ElrondSecurityProperties {
     @Data
     public static class Password {
         private int strength = 10;
+    }
+
+    @Data
+    public static class RateLimit {
+        private boolean enabled = true;
+        private int maxAttemptsPerMinute = 5;
+        private int maxAttemptsPerHour = 20;
+    }
+
+    @Data
+    public static class AccountLockout {
+        private boolean enabled = true;
+        private int maxFailedAttempts = 5;
+        private long lockoutDurationMinutes = 15;
     }
 }

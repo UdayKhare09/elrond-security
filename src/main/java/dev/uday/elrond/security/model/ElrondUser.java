@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -39,6 +40,10 @@ public class ElrondUser implements UserDetails {
     private boolean mfaEnabled;
     private String mfaSecret;
 
+    // Account lockout fields
+    private int failedLoginAttempts;
+    private LocalDateTime lockedUntil;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
@@ -61,7 +66,10 @@ public class ElrondUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        if (lockedUntil == null) {
+            return true;
+        }
+        return LocalDateTime.now().isAfter(lockedUntil);
     }
 
     @Override

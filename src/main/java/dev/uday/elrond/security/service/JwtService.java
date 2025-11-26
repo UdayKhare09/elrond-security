@@ -3,6 +3,7 @@ package dev.uday.elrond.security.service;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import dev.uday.elrond.security.ElrondSecurityProperties;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtService {
@@ -57,7 +59,8 @@ public class JwtService {
 
     public boolean isMfaToken(String token) {
         Claims claims = extractClaims(token);
-        return claims.get("mfa", Boolean.class) == null || !claims.get("mfa", Boolean.class);
+        Boolean mfaFlag = claims.get("mfa", Boolean.class);
+        return mfaFlag != null && mfaFlag;
     }
 
     private Claims extractClaims(String token) {
@@ -71,8 +74,19 @@ public class JwtService {
     public boolean validateToken(String token, String username) {
         try {
             final String extractedUsername = extractUsername(token);
-            return (extractedUsername.equals(username) && !isTokenExpired(token));
+            boolean isValid = extractedUsername.equals(username) && !isTokenExpired(token);
+            if (!isValid) {
+                log.warn("Invalid JWT token for user: {}", username);
+            }
+            return isValid;
+        } catch (ExpiredJwtException e) {
+            log.warn("Expired JWT token for user: {}", username);
+            return false;
+        } catch (MalformedJwtException e) {
+            log.warn("Malformed JWT token for user: {}", username);
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
+            log.warn("JWT validation failed for user: {}", username);
             return false;
         }
     }

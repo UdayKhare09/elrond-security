@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,8 +75,26 @@ public class ElrondSecurityConfig {
                     config.setAllowedMethods(properties.getCors().getAllowedMethods());
                     config.setAllowedHeaders(properties.getCors().getAllowedHeaders());
                     config.setAllowCredentials(properties.getCors().isAllowCredentials());
+                    config.setMaxAge(3600L); // Cache preflight response for 1 hour
                     return config;
                 }))
+                .headers(headers -> headers
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::deny)
+                        .xssProtection(HeadersConfigurer.XXssConfig::disable) // Modern browsers use CSP instead
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; " +
+                                "script-src 'self'; " +
+                                "style-src 'self' 'unsafe-inline'; " +
+                                "img-src 'self' data: https:; " +
+                                "font-src 'self'; " +
+                                "connect-src 'self'; " +
+                                "frame-ancestors 'none'"
+                        ))
+                        .contentTypeOptions(HeadersConfigurer.ContentTypeOptionsConfig::disable)
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000)) // 1 year
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicUrls).permitAll()
                         .requestMatchers("/actuator/**").permitAll()

@@ -1,0 +1,88 @@
+# Elrond Security Configuration Example
+# This file shows all available security configuration options
+
+elrond:
+  security:
+    # JWT Configuration
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:your-secret-key-change-this-in-production}
+      expiration: 3600000  # 1 hour in milliseconds
+
+    # Database Configuration
+    db:
+      url: ${DB_URL:jdbc:postgresql://localhost:5432/elrond}
+      username: ${DB_USERNAME:postgres}
+      password: ${DB_PASSWORD:postgres}
+
+    # Email Configuration
+    mail:
+      host: ${MAIL_HOST:smtp.gmail.com}
+      port: ${MAIL_PORT:587}
+      username: ${MAIL_USERNAME:your-email@gmail.com}
+      password: ${MAIL_PASSWORD:your-app-password}
+      from: ${MAIL_FROM:noreply@yourdomain.com}
+
+    # MFA Configuration
+    mfa:
+      issuer: ${MFA_ISSUER:YourApp}
+      enabled: true
+
+    # CORS Configuration
+    cors:
+      allowed-origins:
+        - http://localhost:3000
+        - http://localhost:4200
+        - https://yourdomain.com
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowed-headers:
+        - Authorization
+        - Content-Type
+        - X-Requested-With
+      allow-credentials: true
+
+    # Password Configuration
+    password:
+      strength: 10  # BCrypt rounds (10-12 recommended for production)
+
+    # Account Lockout Configuration
+    account-lockout:
+      enabled: true
+      max-failed-attempts: 5
+      lockout-duration-minutes: 15
+
+    # Rate Limiting Configuration (for future implementation)
+    rate-limit:
+      enabled: true
+      max-attempts-per-minute: 5
+      max-attempts-per-hour: 20
+
+    # Public URLs (endpoints that don't require authentication)
+    public-urls:
+      - /api/v1/auth/register
+      - /api/v1/auth/login
+      - /api/v1/auth/verify-email
+      - /api/v1/auth/mfa/verify
+      - /actuator/health
+      - /swagger-ui/**
+      - /v3/api-docs/**
+
+
+
+# Logging Configuration
+logging:
+  level:
+    dev.uday.elrond.security: INFO
+    org.springframework.security: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+  file:
+    name: logs/elrond-security.log
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
